@@ -2,7 +2,7 @@ import os
 import uuid
 from typing import Annotated
 
-from fastapi import FastAPI, HTTPException, Form, File
+from fastapi import FastAPI, HTTPException, Form, File, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
@@ -25,19 +25,25 @@ def read_root():
 
 
 @app.post("/edit-file/")
-async def edit_file(file: Annotated[bytes, File()], script: Annotated[str, Form()]):
+async def edit_file(
+        file: Annotated[bytes, File()],
+        script: Annotated[str, Form()],
+        background_tasks: BackgroundTasks):
     # 一時的なファイル保存先の設定
     temp = f"{str(uuid.uuid4())}"
 
     with open(temp, "wb") as buffer:
         buffer.write(file)
 
+    background_tasks.add_task(background_task, temp)
+
     try:
-        exec(script, globals())
+        exec(script, {"input_filename": temp, "output_filename": temp})
         return FileResponse(temp, filename=temp)
     except Exception as e:
         raise HTTPException(status_code=500, detail={"status": 500, "detail": str(e)})
-    finally:
-        # 一時ファイルの削除
-        if os.path.exists(temp):
-            os.remove(temp)
+
+
+def background_task(temp: str):
+    if os.path.exists(temp):
+        os.remove(temp)
