@@ -1,22 +1,24 @@
 [tool.poetry]
-name = "fastapi-starter"
+name = "python-executor"
 version = "1.0.0"
-description = "A starter kit for fastapi."
+description = "Python executor"
 authors = ["FooQoo <horseshoes.buzz.17@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "fastapi_starter", from = "src"}]
+packages = [{ include = "python_executor", from = "src" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 fastapi = "^0.108.0"
-uvicorn = {extras = ["standard"], version = "^0.22.0"}
+uvicorn = { extras = ["standard"], version = "^0.25.0" }
+python-multipart = "^0.0.7"
+pandas = "^2.2.0"
 
 [tool.poetry.group.dev.dependencies]
 python-dotenv = "^1.0.0"
-black = "^23.3.0"
+black = "^23.12.1"
 flake8 = "^7.0.0"
-mypy = "^1.3.0"
+mypy = "^1.8.0"
 
 [build-system]
 requires = ["poetry-core"]
